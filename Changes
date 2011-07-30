@@ -17,5 +17,9 @@ with Image-Base-Magick.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
+Version 2, July 2011
+    - new -quality_percent option for JPEG
+    - diamond() using polygon
+
 Version 1, May 2011
     - the first version

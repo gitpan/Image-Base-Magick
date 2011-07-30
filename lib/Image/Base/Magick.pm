@@ -19,16 +19,6 @@
 # file:///usr/share/doc/imagemagick-doc/www/perl-magick.html
 # file:///usr/share/doc/imagemagick-doc/www/formats.html
 
-# A -quality_percent might $m->Set(quality=>100) parameter for jpeg/miff
-# per
-# file:///usr/share/doc/imagemagick-doc/www/perl-magick.html#set-attribute
-#
-# cf similar for
-#     Image::Base::Imager
-#     Image::Base::Gtk2::Gdk::Pixbuf
-#     Image::Base::Magick
-
-
 require 5;
 package Image::Base::Magick;
 use strict;
@@ -40,10 +30,10 @@ use vars '$VERSION', '@ISA';
 use Image::Base;
 @ISA = ('Image::Base');
 
-$VERSION = 1;
+$VERSION = 2;
 
 # uncomment this to run the ### lines
-#use Smart::Comments '###';
+#use Devel::Comments '###';
 
 sub new {
   my ($class, %params) = @_;
@@ -400,6 +390,12 @@ sub _save_options {
       return (quality => $zlib_compression * 10);
     }
   }
+  # For JPEG and MIFF "quality" option is a percentage 0 to 100
+  # file:///usr/share/doc/imagemagick-doc/www/perl-magick.html#set-attribute
+  my $quality = $self->{'-quality_percent'};
+  if (defined $quality) {
+    return (quality => $quality);
+  }
   return;
 }
 
@@ -442,8 +438,8 @@ sub line {
   ### Image-Base-Magick line: @_
   my $err;
   if ($err = $self->{'-imagemagick'}->Draw (primitive => 'line',
-                                               fill => $colour,
-                                               points => "$x1,$y1 $x2,$y2")) {
+                                            fill => $colour,
+                                            points => "$x1,$y1 $x2,$y2")) {
     croak $err;
   }
 }
@@ -476,7 +472,7 @@ sub rectangle {
 
 sub ellipse {
   my ($self, $x1, $y1, $x2, $y2, $colour, $fill) = @_;
-  ### Image-Magick ellipse: "$x1, $y1, $x2, $y2, $colour"
+  ### Image-Base-Magick ellipse: "$x1, $y1, $x2, $y2, $colour"
 
   my $m = $self->{'-imagemagick'};
   my $w = $x2 - $x1;
@@ -496,6 +492,50 @@ sub ellipse {
     $err = $m->Draw (primitive => 'line',
                      fill => $colour,
                      points => "$x1,$y1 $x2,$y2");
+  }
+  if ($err) {
+    croak $err;
+  }
+}
+
+sub diamond {
+  my ($self, $x1, $y1, $x2, $y2, $colour, $fill) = @_;
+  ### Image-Base-Magick diamond() ...
+
+  my $xh = ($x2 - $x1 + 1);
+  my $yh = ($y2 - $y1 + 1);
+  my $xeven = ! ($xh & 1);
+  my $yeven = ! ($yh & 1);
+  $xh = int($xh / 2);
+  $yh = int($yh / 2);
+
+  my $m = $self->{'-imagemagick'};
+  my $err;
+  if ($x1 == $x2 && $y1 == $y2) {
+    # 1x1 polygon doesn't seem to draw any pixels in imagemagick 6.6, do it
+    # as a single point instead
+    $err = $m->set ("pixel[$x1,$y1]", $colour);
+
+  } else {
+    $err = $m->Draw (primitive => 'polygon',
+                     ($fill ? 'fill' : 'stroke') => $colour,
+                     points => (($x1+$xh).' '.$y1  # top centre
+
+                                # left
+                                .' '.$x1.' '.($y1+$yh)
+
+                                .($yeven ? ' '.$x1.' '.($y2-$yh)  : '')
+
+                                # bottom
+                                .' '.($x1+$xh).' '.$y2
+                                .($xeven ? ' '.($x2-$xh).' '.$y2   : '')
+
+                                # right
+                                .($yeven ? ' '.$x2.' '.($y2-$yh)  : '')
+                                .' '.$x2.' '.($y1+$yh)
+
+                                .($xeven ? ' '.($x2-$xh).' '.$y1  : '')
+                               ));
   }
   if ($err) {
     croak $err;
@@ -545,13 +585,15 @@ The native ImageMagick drawing has hugely more features, but this module is
 an easy way to point C<Image::Base> style code at an ImageMagick canvas and
 use the numerous file formats ImageMagick can read and write.
 
+=head2 Colour Names
+
 Colour names are anything recognised by ImageMagick,
 
     http://imagemagick.org/www/color.html
     file:///usr/share/doc/imagemagick/www/color.html
 
-The names include 1, 2 and 4-digit hex "#RGB", "#RRGGBB", "#RRRRGGGGBBBB",
-other colour models, a table of names roughly per X11, and a file
+This includes 1, 2 and 4-digit hex "#RGB", "#RRGGBB", "#RRRRGGGGBBBB",
+similar in other colour models, a table of names roughly per X11, and a file
 F<config/colors.xml> of extras (under F</usr/share/ImageMagick-6.6.0/> or
 whatever version number).
 
@@ -566,6 +608,22 @@ with
 
     my $m = $image->get('-imagemagick');
     $m->Set (antialias => 0);
+
+=head2 Graphics Magick
+
+The C<Graphics::Magick> module using the graphicsmagick copy of imagemagick
+should work, to the extent it's compatible with imagemagick.  There's
+nothing to choose C<Graphics::Magick> as such currently, but a
+C<Graphics::Magick> object can be created and passed in as the
+C<-imagemagick> target,
+
+    my $m = Graphics::Magick->new (size => '200x100')
+    $m->ReadImage('xc:black');
+    my $image = Image::Base::Magick-new (-imagemagick => $m);
+
+However as of graphicsmagick 1.3.12 there's something bad in its XS causing
+segvs attempting to write to a file handle, which is what
+C<$image-E<gt>save()> does.  A C<$m-E<gt>Write()> to a file works.
 
 =head1 FUNCTIONS
 
@@ -635,13 +693,25 @@ This is the C<magick> attribute of the ImageMagick object.  Be careful of
 Some of the choices are pseudo-formats, for example saving as "X" displays a
 preview window in X windows, or "PRINT" writes to the printer.
 
+=item C<-quality_percent> (0 to 100 or C<undef>)
+
+The image quality when saving to JPEG.  JPEG compresses by reducing colours
+and resolution in ways that are not too noticeable to the human eye.  100
+means full quality, no such reductions.  C<undef> means the imagemagick
+C<DefaultImageQuality>, which is 75.
+
+This attribute becomes the C<quality> parameter to
+C<$imagemagick-E<gt>Write()>.
+
 =item C<-zlib_compression> (integer 0-9 or -1, default C<undef>)
 
 The amount of data compression to apply when saving.  The value is Zlib
 style 0 for no compression up to 9 for maximum effort.  -1 means Zlib's
 default, usually 6.  C<undef> or never set means ImageMagick's default,
-which is 7.  This attribute becomes the ImageMagick "quality" parameter for
-saving PNG.
+which is 7.
+
+This attribute becomes the C<quality> parameter to
+C<$imagemagick-E<gt>Write()> when saving PNG.
 
 =back
 

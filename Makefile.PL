@@ -47,5 +47,12 @@ MyMakeMakerExtras::WriteMakefile
    { resources =>
      { homepage => 'http://user42.tuxfamily.org/image-base-magick/index.html',
      },
+     optional_features =>
+     { maximum_tests =>
+       { description => 'Have "make test" do as much as possible.',
+         requires => { 'Test::Weaken' => '2.000',
+                     },
+       },
+     },
    },
   );

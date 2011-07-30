@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.67.
+signed via the Module::Signature module, version 0.68.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -15,40 +15,43 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 842745cb706f8f2126506f544492f7a80dbe29b3 COPYING
-SHA1 9bbd1d2aaa22464cf082a9933482feeba7b181bc Changes
-SHA1 e2cccef22f44d27c9defe2bb66d676d3c3466497 MANIFEST
-SHA1 d6f9595a0ae02220d6781c9460782ae32c0d4aaf MANIFEST.SKIP
-SHA1 c3ea410c2d16373c625b1f84ea16cf6548d27d1b META.yml
-SHA1 99cc8f6dc1e3345572db06c46dd60cde17a8edd5 Makefile.PL
-SHA1 7d5cc1868d2667e2ed06e4a1c96cfac6a92487a7 debian/changelog
+SHA1 60d3341780ea50504d9ad78a82b182fbe7b985c9 Changes
+SHA1 1dc766aeb171a690a7f008aab3ba0c299427d242 MANIFEST
+SHA1 1d745ef4cc154d3b13bfee6d1048ac4135fc1aa7 MANIFEST.SKIP
+SHA1 acfa79fb6eb9eb96130ae8c0eee020a9bc380f29 META.yml
+SHA1 96d7afcf515bc905b5b4b389a90bd27b573c11cc Makefile.PL
+SHA1 acbbbd4f6d0ec4c1dd528212c7753beec007ce8b debian/changelog
 SHA1 ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 debian/compat
 SHA1 c0c3499452138efae0067ec8afcdc9f3492c12d2 debian/control
 SHA1 27ce32ffd483eeae8bfea7ae657a1d0efd332125 debian/copyright
 SHA1 4029ecfcc1d6450010f9bf8333a682bf8b8f3fe2 debian/rules
 SHA1 61652cd1568dcf2614df833eba241755eee34e89 debian/source/format
 SHA1 59459e3ec9ad1d8c54f4c847ee6b43904f5593f3 debian/watch
-SHA1 9479addc0f745f79f0df1c5710da9eb9cae47a71 devel/magick.pl
+SHA1 c200a930c4e1cace7ec1a7d3c0d72c543bad2142 devel/graphics-magick.pl
+SHA1 f333f63c7d403da42a2c657b31b1d4abdead5af5 devel/magick.pl
 SHA1 160f000e516537774e0d908016d28379e7bdd26b devel/txt.pl
-SHA1 643dd918cd7ce7e96a3a47b916a4a7ea09125df8 inc/MyMakeMakerExtras.pm
+SHA1 d34492ea04ab0f004fbb3c5ca8a6bd42a216844e inc/MyMakeMakerExtras.pm
 SHA1 7a988b2aa7ed09f1cb9029a1ef3f0e2139dca0cf inc/my_pod2html
-SHA1 6d5b71b24c18114f11ccba62cb02aa8ba5573e09 lib/Image/Base/Magick.pm
-SHA1 2cb65d8c3845e15b620c88215f2e235425cd7616 t/Magick-load.t
-SHA1 f17ab6236c191718983628b479ce0e782551c6be t/Magick.t
-SHA1 4dc04c5401c223a0beedf001b5d8fb71afbdabfd t/MyTestHelpers.pm
-SHA1 04c5d5e423a1dc628967f4df35cb315ad463a2b1 t/MyTestImageBase.pm
+SHA1 4d88c406287f405a2a1c20affe5dadae25d7cbfc lib/Image/Base/Magick.pm
+SHA1 2cb65d8c3845e15b620c88215f2e235425cd7616 t/Magick-use.t
+SHA1 7e76621e07fd3edc26194a28c5ffc2ad916902e4 t/Magick-weaken.t
+SHA1 12d58ce7f2b4995a250ba619529bd9ac7af820be t/Magick.t
+SHA1 016f6f5865d54130d50f400fb630091bd1a6c76f t/MyTestHelpers.pm
+SHA1 2844313f42e403c3f519e5a22c01cb3c92ca0454 t/MyTestImageBase.pm
 SHA1 0279c9310ec528d10a2a14e602bf98f1c776cce1 xt/0-META-read.t
 SHA1 219395eb91b03829e6f14db4ebd57d88ea972e61 xt/0-Test-ConsistentVersion.t
 SHA1 8a5e0f34131de34e584fbb1939c191a152566155 xt/0-Test-DistManifest.t
 SHA1 cc04a5fe5d8b8b38bfd56453d5d2686c8ea58783 xt/0-Test-Pod.t
 SHA1 8cc52e23427a82cfef5802bf512b13c65de2687a xt/0-Test-Synopsis.t
-SHA1 4c14845872d6eb4280e12f862d6ba2c343358c60 xt/0-Test-YAML-Meta.t
-SHA1 439687ac1489fcb62c3cf200fedf9ebf210e7bf7 xt/0-no-debug-left-on.t
+SHA1 194f76a77d4b022a8b707932d3a45be310400360 xt/0-Test-YAML-Meta.t
+SHA1 c03e001ac27b9cb5954174852eb3087d758334d2 xt/0-file-is-part-of.t
+SHA1 daba2840c7f128371d42516619a0e04fee2f5ff4 xt/0-no-debug-left-on.t
 SHA1 d405780372d9acc81809fa2784175cea33f9c806 xt/dummy/Image/Base.pm
 SHA1 06bdbff15286191362d354c072fb0498713469ce xt/dummy/Image/Magick.pm
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iD8DBQFNyGugLFMCIV9q3ToRAsAKAKCUIPpdZRWXKr21OgmbvyWJBno6BACgiKXi
-Z5+z8HnBg4Cp736znuTZOr0=
-=6VgI
+iD8DBQFOM1/2LFMCIV9q3ToRAlULAJ9t1AqbISgWfbqof58G+LjrLt4JMACeJixG
+oOfB3k9gKpO5PxwacRE30Dg=
+=Pg99
 -----END PGP SIGNATURE-----

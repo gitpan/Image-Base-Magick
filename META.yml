@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Image-Base-Magick
-version:            1
+version:            2
 abstract:           Image::Base on PNG files using ImageMagick.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -22,8 +22,9 @@ no_index:
     directory:
         - t
         - inc
+        - xt
         - devel
-generated_by:       ExtUtils::MakeMaker version 6.55_02
+generated_by:       ExtUtils::MakeMaker version 6.56
 meta-spec:
     url:      http://module-build.sourceforge.net/META-spec-v1.4.html
     version:  1.4
@@ -43,6 +44,7 @@ optional_features:
             Test::DistManifest:  0
             Test::Pod:           1.00
             Test::Synopsis:      0
+            Test::Weaken:        2.000
             Test::YAML::Meta:    0.15
             YAML:                0
             YAML::Syck:          0

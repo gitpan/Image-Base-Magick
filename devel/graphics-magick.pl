@@ -20,7 +20,7 @@
 use 5.010;
 use strict;
 use warnings;
-use Image::Magick;
+use Graphics::Magick;
 
 use Smart::Comments;
 
@@ -28,75 +28,31 @@ use lib 't';
 use MyTestImageBase;
 
 
-
 {
-  # jpeg compression on save()
-  #
-  require Image::Base::Magick;
-
-  my $image = Image::Base::Magick->new
-    (-width => 200,
-     -height => 100);
-  ### default quality: $image->get('-imagemagick')->Get('quality')
-
-  my $image = Image::Base::Magick->new
-    (-width => 200,
-     -height => 100,
-     -file => '/usr/share/doc/texlive-doc/dvipdfm/mwicks.jpeg');
-
-  # my $image = Image::Base::Magick->new
-  #   (-width => 200,
-  #    -height => 100,
-  #    -file_format => 'jpeg');
-
-  $image->ellipse (1,1, 100,50, 'green');
-  $image->ellipse (100,50, 199,99, '#123456');
-  $image->line (1,99, 199,0, 'red');
-  $image->line (1,0, 199,99, '#654321');
-
-  $image->set (-quality_percent => 1);
-  $image->save ('/tmp/x-001.jpeg');
-  $image->set (-quality_percent => 100);
-  $image->save ('/tmp/x-100.jpeg');
-  system "ls -l /tmp/x*";
-  exit 0;
-}
-
-{
-  my $filename = 'temp%d.png';
-
-  my $m = Image::Magick->new or die;
-  # if (my $err = $m->Set (size => '20x10')) { die $err }
-  if (my $err = $m->ReadImage('xc:black')) { die $err }
-  if (my $err = $m->Set (filename => $filename)) { die $err }
-
-  require Fcntl;
-  sysopen FH, $filename, Fcntl::O_RDONLY() or die;
-  binmode FH or die;
-  my @oldims = @$m;
-  @$m = ();
-  ### empty before load: $m
-  ### file size: -s \*FH
-  ### width: $m->Get('width')
-  ### height: $m->Get('height')
-  ### size: $m->Get('size')
-  if (my $err = $m->Read (file => \*FH)) {
-    @$m = @oldims;
-    close FH;
-    die $err;
+  my $m = Graphics::Magick->new (
+                                 # width => 20, height => 10,
+                                 size => '20x10',
+                                 # size => '20x',
+                                );
+  { my $err = $m->ReadImage('xc:black');
+    if ($err) { die $err; }
   }
-  close FH or die;
-  ### load leaves magick: $m
-  ### array: [@$m]
-  ### width: $m->Get('width')
-  ### height: $m->Get('height')
-  ### size: $m->Get('size')
+  require Image::Base::Magick;
+  my $image = Image::Base::Magick->new
+    (-imagemagick => $m);
+  $image->rectangle (0,0, 19,9, 'black', 1);
 
+  $m->Draw(stroke=>'white',
+           primitive=>'ellipse',
+           points=>'5,5, 4,4, 0,360');
+
+  $m->Write ('xpm:-');
+  $image->save('/dev/stdout');
   exit 0;
 }
 
 {
-  my $m = Image::Magick->new (
+  my $m = Graphics::Magick->new (
                               # width => 20, height => 10,
                               size => '20x10',
                               # size => '20x',
@@ -145,14 +101,36 @@ use MyTestImageBase;
   exit 0;
 }
 
+{
+  my $m = Graphics::Magick->new or die;
+  my $filename = '/tmp/foo.png';
+
+  my $image = Graphics::Magick->new or die;
+  $image->Set(size=>'100x100');
+  $image->ReadImage('xc:white');
+  $image->Set('pixel[49,49]'=>'red');
+
+  $image->Set(magick=>'png');
+
+  open(IMAGE, ">$filename");
+  my $status = $image->Write (file => \*IMAGE,
+                              #   filename=>$filename,
+                             );
+  close(IMAGE);
+  ### $status
+
+  system ("ls -l $filename");
+  exit 0;
+}
+
 
 {
   use strict;
   use warnings;
-  use Image::Magick;
+  use Graphics::Magick;
 
   unlink "/tmp/out.png";
-  my $m = Image::Magick->new (size => '1x1');
+  my $m = Graphics::Magick->new (size => '1x1');
   if (!$m) { die; }
   ### $m
 
@@ -166,7 +144,7 @@ use MyTestImageBase;
              # quality => 75,
             );
 
-  $m = Image::Magick->new; #  (size => '64x64');
+  $m = Graphics::Magick->new; #  (size => '64x64');
   if (!$m) { die; }
   ### $m
 
@@ -194,40 +172,9 @@ use MyTestImageBase;
 
 
 
-{
-  require App::MathImage::Image::Base::Magick;
-  my $image = App::MathImage::Image::Base::Magick->new
-    (-width  => 20,
-     -height => 10,
-    );
-  my $m = $image->{'-imagemagick'};
-  $m->Set (size => '20x10') and die;
-  $m->Set (width => '20') and die;
-  $m->Set (height => '10') and die;
-  $m->Set (strokewidth => 0) and die;
-  ### setsize width: $m->Get('width')
-  ### setsize size: $m->Get('size')
-
-  $image->rectangle (0,0, 19,9, 'black', 1);
-
-
-  $m->Draw(stroke=>'white',
-           primitive=>'ellipse',
-           points=>'5,5, 4,4, 0,360');
-
-  # $image->line (1,1, 1,1, 'white');
-  # $image->rectangle (1,1, 1,1, 'white', 1);
-  # $image->ellipse (1,1, 18,8, 'white', 1);
-  # $image->ellipse (1,1, 2,2, 'white', 0);
-
-  $m->Write ('xpm:-');
-  exit 0;
-}
-
-
 
 {
-  my $m = Image::Magick->new;
+  my $m = Graphics::Magick->new;
   ### m: $m->Get('magick')
   $m->Read('/usr/share/emacs/23.2/etc/images/icons/hicolor/16x16/apps/emacs.png');
   ### magick: $m->Get('magick')
@@ -244,7 +191,7 @@ use MyTestImageBase;
 }
 
 {
-  my $m = Image::Magick->new;
+  my $m = Graphics::Magick->new;
   # $m->Set(width=>10, height => 10);
   $m->Set(size=>'20x10');
   $m->ReadImage('xc:black');
@@ -276,7 +223,7 @@ use MyTestImageBase;
 
   $m->Set (size=>'20x10');
   $m->Set (magick=>'xpm');
-  $m = Image::Magick->new;
+  $m = Graphics::Magick->new;
   $m->Set(size=>'20x10');
   $m->ReadImage('xc:white');
 
@@ -301,9 +248,9 @@ use MyTestImageBase;
 {
   use strict;
   use warnings;
-  use Image::Magick;
+  use Graphics::Magick;
 
-  my $m = Image::Magick->new (size => '20x10');
+  my $m = Graphics::Magick->new (size => '20x10');
   if (!$m) { die; }
   ### $m
 

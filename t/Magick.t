@@ -22,7 +22,7 @@ use strict;
 use Test;
 my $test_count;
 BEGIN {
-  $test_count = 1527;
+  $test_count = 2512;
   plan tests => $test_count;
 }
 
@@ -61,14 +61,11 @@ if (! $have_image_magick) {
 
 require Image::Base::Magick;
 
-# uncomment this to run the ### lines
-#use Smart::Comments;
-
 
 #------------------------------------------------------------------------------
 # VERSION
 
-my $want_version = 1;
+my $want_version = 2;
 ok ($Image::Base::Magick::VERSION,
     $want_version,
     'VERSION variable');
@@ -101,9 +98,9 @@ END {
 
 {
   my $image = Image::Base::Magick->new (-width => 300,
-                                                        -height => 300,
-                                                        -file_format => 'png',
-                                                        -zlib_compression => 0);
+                                        -height => 300,
+                                        -file_format => 'png',
+                                        -zlib_compression => 0);
   $image->rectangle(0,0, 299,299, '#000000', 1); # black fill
   $image->rectangle(0,0, 299,299, '#FFFFFF');    # white border
   $image->save ($temp_filename);
@@ -368,8 +365,8 @@ END {
 
 {
   my $image = Image::Base::Magick->new (-width => 20,
-                                                        -height => 10,
-                                                        -file_format => 'png');
+                                        -height => 10,
+                                        -file_format => 'png');
   $image->save ($temp_filename);
   ok (-e $temp_filename, 1,
       "save() to $temp_filename, -e exists");
@@ -409,6 +406,7 @@ END {
 
   require MyTestImageBase;
   MyTestImageBase::check_image ($image);
+  MyTestImageBase::check_diamond ($image);
 }
 
 exit 0;
