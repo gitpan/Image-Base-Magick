@@ -30,7 +30,7 @@ use vars '$VERSION', '@ISA';
 use Image::Base;
 @ISA = ('Image::Base');
 
-$VERSION = 2;
+$VERSION = 3;
 
 # uncomment this to run the ### lines
 #use Devel::Comments '###';
@@ -482,6 +482,7 @@ sub ellipse {
     ### more than 1 pixel wide and/or high, primitive=>ellipse
     ### ellipse: (($x1+$x2)/2).','.(($y1+$y2)/2).' '.($w/2).','.($h/2).' 0,360'
     $err = $m->Draw (primitive => 'ellipse',
+                     strokewidth => .25,
                      ($fill ? 'fill' : 'stroke') => $colour,
                      points => ((($x1+$x2)/2).','.(($y1+$y2)/2)
                                 .' '
@@ -502,12 +503,15 @@ sub diamond {
   my ($self, $x1, $y1, $x2, $y2, $colour, $fill) = @_;
   ### Image-Base-Magick diamond() ...
 
-  my $xh = ($x2 - $x1 + 1);
-  my $yh = ($y2 - $y1 + 1);
-  my $xeven = ! ($xh & 1);
-  my $yeven = ! ($yh & 1);
+  my $xh = ($x2 - $x1);
+  my $yh = ($y2 - $y1);
+  my $xeven = ($xh & 1);
+  my $yeven = ($yh & 1);
   $xh = int($xh / 2);
   $yh = int($yh / 2);
+  ### x centre: $x1+$xh, $x2-$xh
+  ### assert: $x1+$xh+$xeven == $x2-$xh
+  ### assert: $y1+$yh+$yeven == $y2-$yh
 
   my $m = $self->{'-imagemagick'};
   my $err;
@@ -519,6 +523,7 @@ sub diamond {
   } else {
     $err = $m->Draw (primitive => 'polygon',
                      ($fill ? 'fill' : 'stroke') => $colour,
+                     strokewidth => 0,
                      points => (($x1+$xh).' '.$y1  # top centre
 
                                 # left

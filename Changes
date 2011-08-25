@@ -17,6 +17,11 @@ with Image-Base-Magick.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
+
+Version 3, August 2011
+    - fix diamond() coordinates
+    - try strokewidth on ellipse() and diamond()
+
 Version 2, July 2011
     - new -quality_percent option for JPEG
     - diamond() using polygon

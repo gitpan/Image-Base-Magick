@@ -30,14 +30,30 @@ use MyTestImageBase;
 
 
 {
+  require Image::Base::Magick;
+  my $image = Image::Base::Magick->new (-width => 50, -height => 20,
+                                        -file_format => 'xpm');
+  $image->rectangle (0,0, 49,29, 'black');
+  $image->get('-imagemagick')->Set(antialias => 0);
+
+  $image->ellipse (1,1,6,6, 'white');
+  $image->ellipse (11,1,16,6, 'white', 1);
+  $image->ellipse (1,10,7,16, 'white');
+  $image->ellipse (11,10,17,16, 'white', 1);
+
+  $image->save('/dev/stdout');
+  exit 0;
+}
+
+{
   # jpeg compression on save()
   #
   require Image::Base::Magick;
 
-  my $image = Image::Base::Magick->new
-    (-width => 200,
-     -height => 100);
-  ### default quality: $image->get('-imagemagick')->Get('quality')
+  # my $image = Image::Base::Magick->new
+  #   (-width => 200,
+  #    -height => 100);
+  # ### default quality: $image->get('-imagemagick')->Get('quality')
 
   my $image = Image::Base::Magick->new
     (-width => 200,

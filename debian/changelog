@@ -1,5 +1,5 @@
-libimage-base-magick-perl (2-1) unstable; urgency=low
+libimage-base-magick-perl (3-1) unstable; urgency=low
 
   * Packaged version.
 
- -- Kevin Ryde <user42@zip.com.au>  Sat, 30 Jul 2011 11:32:42 +1000
+ -- Kevin Ryde <user42@zip.com.au>  Fri, 26 Aug 2011 09:01:35 +1000
