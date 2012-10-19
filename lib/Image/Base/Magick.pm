@@ -1,4 +1,4 @@
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Magick.
 #
@@ -30,10 +30,11 @@ use vars '$VERSION', '@ISA';
 use Image::Base;
 @ISA = ('Image::Base');
 
-$VERSION = 3;
+$VERSION = 4;
 
 # uncomment this to run the ### lines
-#use Devel::Comments '###';
+#use Smart::Comments '###';
+
 
 sub new {
   my ($class, %params) = @_;
@@ -399,22 +400,27 @@ sub _save_options {
   return;
 }
 
+# Circa ImageMagick 6.7.7.10 "pixel[]" such as
+#
+#     $err = $m->set ("pixel[$x,$y]", $colour);
+#
+# when setting a negative X,Y or big positive X,Y somehow gets $err
+#
+#     Exception 445: pixels are not authentic `black' @ error/cache.c/QueueAuthenticPixelCacheNexus/4387 at t/MyTestImageBase.pm line 326
+# 
+# Using primitive=>'point' avoids that.
+
 sub xy {
   my ($self, $x, $y, $colour) = @_;
-  ### Image-Base-Magick xy: $x,$y,$colour
+  ### Image-Base-Magick xy(): $x,$y,$colour
   my $m = $self->{'-imagemagick'};
   my $err;
   if (@_ == 4) {
-    $err = $m->set ("pixel[$x,$y]", $colour);
+    $err = $m->Draw (primitive => 'point',
+                     fill   => $colour,
+                     points => "$x,$y");
 
-    # $err = $m->Draw (primitive => 'rectangle',
-    #                  stroke => $colour,
-    #                  points => $x.','.($y+1));
-    # $err = $m->Draw (primitive => 'point',
-    #                  stroke => $colour,
-    #                  points => "$x,$y");
-
-    # SetPixel() takes color=>[$r,$g,$b] arrayref, not a string
+    # Or maybe SetPixel(), but it takes color=>[$r,$g,$b] arrayref, not string
     # $err = $m->SetPixel (x=>$x, y=>$y, color=>$colour);
 
   } else {
@@ -587,8 +593,8 @@ C<Image::Base::Magick> extends C<Image::Base> to create or
 update image files using C<Image::Magick>.
 
 The native ImageMagick drawing has hugely more features, but this module is
-an easy way to point C<Image::Base> style code at an ImageMagick canvas and
-use the numerous file formats ImageMagick can read and write.
+a way to point C<Image::Base> style code at an ImageMagick canvas and use
+the numerous file formats ImageMagick can read and write.
 
 =head2 Colour Names
 
@@ -597,10 +603,14 @@ Colour names are anything recognised by ImageMagick,
     http://imagemagick.org/www/color.html
     file:///usr/share/doc/imagemagick/www/color.html
 
-This includes 1, 2 and 4-digit hex "#RGB", "#RRGGBB", "#RRRRGGGGBBBB",
-similar in other colour models, a table of names roughly per X11, and a file
-F<config/colors.xml> of extras (under F</usr/share/ImageMagick-6.6.0/> or
-whatever version number).
+    #RGB    1, 2, 4-digit hex
+    #RRGGBB
+    #RRRRGGGGBBBB
+    names roughly per X11
+    colors.xml file
+
+F<colors.xml> is in F</etc/ImageMagick/>, or in the past in
+F</usr/share/ImageMagick-6.6.0/config/> with whatever version number.
 
 =head2 Anti-Aliasing
 
@@ -626,11 +636,14 @@ C<-imagemagick> target,
     $m->ReadImage('xc:black');
     my $image = Image::Base::Magick-new (-imagemagick => $m);
 
-However as of graphicsmagick 1.3.12 there's something bad in its XS causing
-segvs attempting to write to a file handle, which is what
-C<$image-E<gt>save()> does.  A C<$m-E<gt>Write()> to a file works.
+As of graphicsmagick 1.3.12 there's something bad in its Perl XS interface
+causing segvs attempting to write to a file handle, which is what
+C<$image-E<gt>save()> does.  An C<$m-E<gt>Write()> to a file works.
 
 =head1 FUNCTIONS
+
+See L<Image::Base/FUNCTIONS> for the behaviour common to all Image-Base
+classes.
 
 =over 4
 
@@ -677,7 +690,7 @@ The filename for C<load> or C<save>, or passed to C<new> to load a file.
 
 The filename is used literally, it doesn't have ImageMagick's "%d" scheme
 for sets of numbered files.  The code here is only geared towards a single
-image in a canvas, and a literal filename is the same as other
+image in a canvas, and using the filename literally is the same as other
 C<Image::Base> modules.
 
 =item C<-file_format> (string or C<undef>)
@@ -685,12 +698,12 @@ C<Image::Base> modules.
 The file format as a string like "PNG" or "JPEG", or C<undef> if unknown or
 never set.
 
-After C<load()>, C<-file_format> is the format read.  Setting
-C<-file_format> can change the format for a subsequent C<save()>, or set the
-format for a newly created image.
+C<load()> sets C<-file_format> to the format read.  Setting C<-file_format>
+can change the format for a subsequent C<save()>, or set the format for a
+newly created image.
 
-This is the C<magick> attribute of the ImageMagick object.  Be careful of
-"X" format, which
+This sets the C<magick> attribute of the ImageMagick object.  The available
+formats are per
 
     http://imagemagick.org/www/formats.html
     file:///usr/share/doc/imagemagick/www/formats.html
@@ -700,10 +713,10 @@ preview window in X windows, or "PRINT" writes to the printer.
 
 =item C<-quality_percent> (0 to 100 or C<undef>)
 
-The image quality when saving to JPEG.  JPEG compresses by reducing colours
-and resolution in ways that are not too noticeable to the human eye.  100
-means full quality, no such reductions.  C<undef> means the imagemagick
-C<DefaultImageQuality>, which is 75.
+The image quality when saving to JPEG and similar lossy formats which
+compress by reducing colours and resolution in ways not too noticeable to
+the human eye.  100 means full quality, no such reductions.  C<undef> means
+the imagemagick C<DefaultImageQuality>, which is 75.
 
 This attribute becomes the C<quality> parameter to
 C<$imagemagick-E<gt>Write()>.
@@ -720,8 +733,8 @@ C<$imagemagick-E<gt>Write()> when saving PNG.
 
 =back
 
-For reference, ImageMagick (as of version 6.6) doesn't write a cursor
-"hotspot" in XPM format, so there's no C<-hotx> and C<-hoty> options.
+For reference, ImageMagick (as of version 6.7.7) doesn't read or write the
+cursor "hotspot" of XPM format, so there's no C<-hotx> and C<-hoty> options.
 
 =head1 SEE ALSO
 
@@ -745,7 +758,7 @@ http://user42.tuxfamily.org/image-base-magick/index.html
 
 =head1 LICENSE
 
-Image-Base-Magick is Copyright 2010, 2011 Kevin Ryde
+Image-Base-Magick is Copyright 2010, 2011, 2012 Kevin Ryde
 
 Image-Base-Magick is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the Free

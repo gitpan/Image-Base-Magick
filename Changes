@@ -1,4 +1,4 @@
-Copyright 2011 Kevin Ryde
+Copyright 2011, 2012 Kevin Ryde
 
 This file is part of Image-Base-Magick.
 
@@ -17,6 +17,10 @@ with Image-Base-Magick.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
+
+Version 4, October 2012
+    - xy() use Draw(primitive=>'point') instead of set("pixel[]"), to
+      avoid error on negative or large X,Y
 
 Version 3, August 2011
     - fix diamond() coordinates

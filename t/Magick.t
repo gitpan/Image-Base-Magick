@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Magick.
 #
@@ -20,15 +20,17 @@
 use 5.004;
 use strict;
 use Test;
-my $test_count;
-BEGIN {
-  $test_count = 2512;
-  plan tests => $test_count;
-}
+
+my $test_count = (tests => 2518)[1];
+plan tests => $test_count;
 
 use lib 't';
 use MyTestHelpers;
 BEGIN { MyTestHelpers::nowarnings() }
+
+# uncomment this to run the ### lines
+#use Smart::Comments;
+
 
 # only test on 6.6 up since 6.5.5 seen doing dodgy stuff on a 3x3 ellipse,
 # coming out with an excess to the right like
@@ -39,7 +41,7 @@ BEGIN { MyTestHelpers::nowarnings() }
 
 my $have_image_magick = eval { require Image::Magick; 1 };
 if ($have_image_magick) {
-  MyTestHelpers::diag ("Image::Magick VERSION ",Image::Magick->VERSION);
+  MyTestHelpers::diag ("Image::Magick VERSION $Image::Magick::VERSION");
 
   # Demand 6.6 or higher for bug fixes.  But not Image::Magick->VERSION(6.6)
   # as that provokes badness when non-numeric $VERSION='6.6.0'.
@@ -65,7 +67,7 @@ require Image::Base::Magick;
 #------------------------------------------------------------------------------
 # VERSION
 
-my $want_version = 3;
+my $want_version = 4;
 ok ($Image::Base::Magick::VERSION,
     $want_version,
     'VERSION variable');
@@ -405,7 +407,8 @@ END {
   $m->Set (antialias => 0);
 
   require MyTestImageBase;
-  MyTestImageBase::check_image ($image);
+  MyTestImageBase::check_image ($image,
+                               big_fetch_expect => '#000000');
   MyTestImageBase::check_diamond ($image);
 }
 

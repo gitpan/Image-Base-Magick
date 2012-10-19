@@ -1,6 +1,6 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Magick.
 #
@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License along
 # with Image-Base-Magick.  If not, see <http://www.gnu.org/licenses/>.
 
-require 5;
+require 5.001;
 use strict;
 use ExtUtils::MakeMaker;
 use lib 'inc';
@@ -25,7 +25,7 @@ use MyMakeMakerExtras;
 
 MyMakeMakerExtras::WriteMakefile
   (NAME         => 'Image-Base-Magick',
-   ABSTRACT     => 'Image::Base on PNG files using ImageMagick.',
+   ABSTRACT     => 'Image::Base on files using ImageMagick.',
    VERSION_FROM => 'lib/Image/Base/Magick.pm',
    AUTHOR       => 'Kevin Ryde <user42@zip.com.au>',
    LICENSE      => 'gpl',
@@ -41,12 +41,15 @@ MyMakeMakerExtras::WriteMakefile
                     'Test' => 0,
                    },
    # Magick might go right back to 5.002 or some such
-   MIN_PERL_VERSION => '5.000',
+   MIN_PERL_VERSION => '5.001',
 
    META_MERGE =>
    { resources =>
      { homepage => 'http://user42.tuxfamily.org/image-base-magick/index.html',
+       license  => 'http://www.gnu.org/licenses/gpl.html',
      },
+     no_index => { directory=>['devel'] },
+
      optional_features =>
      { maximum_tests =>
        { description => 'Have "make test" do as much as possible.',

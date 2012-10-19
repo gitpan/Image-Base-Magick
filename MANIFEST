@@ -32,4 +32,12 @@ xt/0-Test-Synopsis.t
 xt/0-Test-YAML-Meta.t
 xt/dummy/Image/Base.pm
 xt/dummy/Image/Magick.pm
+xtools/my-check-copyright-years.sh
+xtools/my-check-file-part-of.sh
+xtools/my-check-spelling.sh
+xtools/my-deb.sh
+xtools/my-diff-prev.sh
+xtools/my-manifest.sh
+xtools/my-pc.sh
+xtools/my-tags.sh
 META.yml                                 Module meta-data (added by MakeMaker)

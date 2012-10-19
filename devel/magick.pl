@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-Magick.
 #
@@ -28,6 +28,20 @@ use lib 't';
 use MyTestImageBase;
 
 
+
+{
+  # rectangle off-screen
+  require Image::Base::Magick;
+  my $image = Image::Base::Magick->new (-width => 50, -height => 20,
+                                        -file_format => 'xpm');
+  $image->rectangle (0,0, 49,29, 'black',1);
+  $image->get('-imagemagick')->Set(antialias => 0);
+
+  $image->rectangle (-10,-10,6,6, 'white',1);
+
+  $image->save('/dev/stdout');
+  exit 0;
+}
 
 {
   require Image::Base::Magick;

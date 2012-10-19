@@ -19,7 +19,6 @@
 
 require 5;
 use strict;
-use warnings;
 
 use Smart::Comments;
 
